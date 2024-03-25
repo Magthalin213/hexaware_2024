@@ -4,11 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.model.Lease;
+import com.model.Orders;
 import com.model.Product;
 import com.model.User;
 import com.util.DBUtil;
@@ -54,6 +53,44 @@ public class OrderProcessor implements IOrderManagementRepository {
 		}
 		DBUtil.dbClose();
 		return list;
+	}
+
+	@Override
+	public List<Orders> getAllOrder(int id) throws SQLException {
+		List<Orders> list = new ArrayList<>();
+		Connection conn=DBUtil.getDBConn();
+		String sql = "select * from orders where user_id=?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, id);
+		ResultSet rst = pstmt.executeQuery();
+		while (rst.next()) { 
+			int pid = rst.getInt("product_id");
+			int uid = rst.getInt("user_id");
+			int oid = rst.getInt("orders_id");
+			String pname = rst.getString("product_name");
+			String uname = rst.getString("user_name");
+			Orders orders = new Orders(pid, uid, oid, pname, uname);
+			list.add(orders);
+		}
+		DBUtil.dbClose();
+		return list;
+	}
+
+	@Override
+	public void createOrder(int id, int userId, String productName, String username) throws SQLException {
+		Connection conn=DBUtil.getDBConn();
+		String sql = "INSERT INTO orders(product_id,user_id,product_name,user_name) VALUES(?,?,?,?)";
+		PreparedStatement pstmt=conn.prepareStatement(sql);
+		pstmt.setInt(1, id);
+		pstmt.setInt(2, userId);
+		pstmt.setString(3, productName);
+		pstmt.setString(4,username);
+		int changes=pstmt.executeUpdate();
+		if(changes==0)
+			System.out.println("Error....No updates have been done");
+		else
+			System.out.println("New Order has been placed succesfully...");
+		DBUtil.dbClose();
 	}
 	
 }
