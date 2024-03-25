@@ -17,4 +17,10 @@ public interface IOrderManagementRepository {
 
 	public void createOrder(int id, int userId, String productName, String username) throws SQLException;
 
+	public void cancelOrder(int userid, int orderid) throws SQLException;
+
+	public String checkRole(int rolecheck) throws SQLException;
+
+	public void createProduct(Product proinsertion) throws SQLException;
+
 }

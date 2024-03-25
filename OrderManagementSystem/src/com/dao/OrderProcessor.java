@@ -92,5 +92,59 @@ public class OrderProcessor implements IOrderManagementRepository {
 			System.out.println("New Order has been placed succesfully...");
 		DBUtil.dbClose();
 	}
+
+	@Override
+	public void cancelOrder(int userid, int orderid) throws SQLException {
+		Connection conn=DBUtil.getDBConn();
+		String sql = "delete from orders where user_id = ? AND orders_id = ?";
+		PreparedStatement pstmt=conn.prepareStatement(sql);
+		pstmt.setInt(1, userid);
+		pstmt.setInt(2, orderid);
+		int changes=pstmt.executeUpdate();
+		if(changes==0)
+			System.out.println("Error....No updates have been done");
+		else
+			System.out.println("Order has been deletd succesfully...");
+		DBUtil.dbClose();
+	}
+
+	@Override
+	public String checkRole(int rolecheck) throws SQLException {
+		Connection conn=DBUtil.getDBConn();
+		String sql = "select role from user where id= ? AND role ='Admin' ";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, rolecheck);
+		ResultSet rst = pstmt.executeQuery();
+		if(rst.next())
+		{
+			return "Admin";
+		}
+		else
+			return "User";
+	}
+
+	@Override
+	public void createProduct(Product proinsertion) throws SQLException {
+		Connection conn=DBUtil.getDBConn();
+		String sql = "INSERT INTO product(product_name,description,price,quantity_in_stock,type) VALUES(?,?,?,?,?)";
+		PreparedStatement pstmt=conn.prepareStatement(sql);
+		String productName= proinsertion.getProductName();
+		String description=proinsertion.getDescription();
+		double price = proinsertion.getPrice();
+		int qis= proinsertion.getQuantityInStock();
+		String type=proinsertion.getType();
+		pstmt.setString(1, productName);
+		pstmt.setString(2, description);
+		pstmt.setDouble(3, price);
+		pstmt.setInt(4, qis);
+		pstmt.setString(5, type);
+		int changes=pstmt.executeUpdate();
+		if(changes==0)
+			System.out.println("Error....No updates have been done");
+		else
+			System.out.println("New Product has been Inserted succesfully...");
+		System.out.println("Product Name: "+productName+"\ndescription: "+description+"\nPrice: "+price+"\nQuantity in Stock: "+qis+"\nType: "+type);
+		DBUtil.dbClose();
+	}
 	
 }

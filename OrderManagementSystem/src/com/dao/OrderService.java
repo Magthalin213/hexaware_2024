@@ -26,4 +26,16 @@ public class OrderService {
 	public void createOrder(int id, int userId, String productName, String username) throws SQLException {
 		irmr.createOrder(id,userId,productName,username);
 	}
+
+	public void cancelOrder(int userid, int orderid) throws SQLException {
+		irmr.cancelOrder(userid,orderid);
+	}
+
+	public String checkRole(int rolecheck) throws SQLException {
+		return irmr.checkRole(rolecheck);
+	}
+
+	public void createProduct(Product proinsertion) throws SQLException {
+		irmr.createProduct(proinsertion);
+	}
 }
